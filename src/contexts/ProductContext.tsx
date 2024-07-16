@@ -20,7 +20,7 @@ const ProductContextProvider = ({ children }: Props) => {
 	useEffect(() => {
 		(async () => {
 			const { data } = await instance.get("/products");
-			dispatch({ type: "SET_PRODUCTS", payload: data });
+			dispatch({ type: "SET_PRODUCTS", payload: data.data });
 		})();
 	}, []);
 

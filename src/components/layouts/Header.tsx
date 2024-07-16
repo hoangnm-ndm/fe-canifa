@@ -1,16 +1,10 @@
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext, AuthContextType } from "@/contexts/AuthContext";
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Header() {
-	const { isAuthenticated, user, logout } = useContext(AuthContext);
-	const navigate = useNavigate();
-
-	const handleLogout = () => {
-		logout();
-		navigate("/");
-	};
-
+	const { user, logout } = useContext(AuthContext) as AuthContextType;
+	console.log(user);
 	return (
 		<header>
 			<ul>
@@ -23,16 +17,16 @@ export default function Header() {
 				<li>
 					<Link to="/products">Shop</Link>
 				</li>
-				{isAuthenticated ? (
+				{user ? (
 					<>
 						<li>
 							<span>Welcome, {user?.email}</span>
 						</li>
 						<li>
-							<button onClick={handleLogout}>Logout</button>
+							<button onClick={logout}>Logout</button>
 						</li>
 						<li>
-							<Link to="/admin">Bạn là admin?</Link>
+							<Link to="/admin">You are admin?</Link>
 						</li>
 					</>
 				) : (

@@ -3,7 +3,7 @@ import "./App.scss";
 import AuthForm from "./components/AuthForm";
 import LayoutClient from "./components/LayoutClient";
 import ProductDetail from "./pages/ProductDetail";
-import PrivateRouter from "./components/PrivateRouter";
+import PrivateRouter from "./utils/PrivateRouter";
 import LayoutAdmin from "./components/LayoutAdmin";
 import Dashboard from "./pages/admin/Dashboard";
 import ProductForm from "./components/ProductForm";

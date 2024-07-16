@@ -1,10 +1,10 @@
+import instance from "@/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { User } from "@/interfaces/User";
+import { schemaLogin, schemaRegister } from "@/utils/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { User } from "@/interfaces/User";
-import { AuthContext } from "@/contexts/AuthContext";
-import { schemaLogin, schemaRegister } from "@/utils/authSchema";
 
 type Props = {
 	isRegister?: boolean;
@@ -12,23 +12,28 @@ type Props = {
 
 const AuthForm = ({ isRegister }: Props) => {
 	const nav = useNavigate();
-	const { login, register: registerUser } = useContext(AuthContext);
+	const { login: contextLogin } = useAuth();
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<User>({ resolver: zodResolver(isRegister ? schemaRegister : schemaLogin) });
-	const onSubmit = async (data: User) => {
+	const onSubmit = async (user: User) => {
 		try {
 			if (isRegister) {
-				await registerUser(data.email, data.password, data.username);
-				if (confirm("Successfully, redirect to login page?")) nav("/login");
+				const { data } = await instance.post("/auth/register", { email: user.email, password: user.password });
+				console.log(data);
+				alert(`Register success with email: ${data.email}`);
+				nav("/login");
 			} else {
-				login(data.email, data.password);
-				if (confirm("Successfully, redirect to admin page?")) nav("/");
+				const { data } = await instance.post("/auth/login", user);
+				console.log(data);
+				contextLogin(data.token, data.user);
+				nav(data.user.role === "admin" ? "/admin" : "/");
 			}
 		} catch (error: any) {
-			alert(error.response.data || "Failed");
+			console.log(error);
+			alert(error.response.data.message);
 		}
 	};
 	return (
@@ -41,14 +46,6 @@ const AuthForm = ({ isRegister }: Props) => {
 					</label>
 					<input className="form-control" type="email" {...register("email")} />
 					{errors.email && <p className="text-danger">{errors.email.message}</p>}
-				</div>
-
-				<div className="mb-3">
-					<label htmlFor="username" className="form-label">
-						username
-					</label>
-					<input className="form-control" type="text" {...register("username")} />
-					{errors.username && <p className="text-danger">{errors.username.message}</p>}
 				</div>
 
 				<div className="mb-3">

@@ -1,3 +1,4 @@
+import { User } from "@/interfaces/User";
 import axios from "axios";
 
 const instance = axios.create({
@@ -9,12 +10,7 @@ const instance = axios.create({
 	},
 });
 
-instance.interceptors.request.use((config: any) => {
-	const token = localStorage.getItem("token");
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
-});
+export const getProtectedData = (token: string) =>
+	instance.get("/protected", { headers: { Authorization: `Bearer ${token}` } });
 
 export default instance;

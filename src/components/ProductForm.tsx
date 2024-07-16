@@ -6,6 +6,7 @@ import { ProductContext } from "@/contexts/ProductContext";
 import productSchema from "@/utils/productSchema";
 import instance from "@/api";
 import { Product } from "@/interfaces/Product";
+import ImageUploader from "./ImageUploader";
 
 const { VITE_CLOUD_NAME, VITE_UPLOAD_PRESET } = import.meta.env;
 
@@ -117,37 +118,17 @@ const ProductForm = () => {
 					{errors.description?.message && <p className="text-danger">{errors.description?.message}</p>}
 				</div>
 
-				<div className="mb-3">
-					<label htmlFor="thumbnailOption" className="form-label">
-						Choose Thumbnail Option
-					</label>
-					<select
-						className="form-control"
-						id="thumbnailOption"
-						value={thumbnailOption}
-						onChange={(e) => setThumbnailOption(e.target.value)}
-					>
-						<option value="keep">Keep Current Thumbnail</option>
-						<option value="link">Add Thumbnail from Link</option>
-						<option value="upload">Upload Thumbnail from Local</option>
-					</select>
-				</div>
+				<ImageUploader
+					setThumbnailUrl={setThumbnailUrl}
+					thumbnailOption={thumbnailOption}
+					setThumbnailOption={setThumbnailOption}
+					register={register}
+					errors={errors}
+				/>
 
-				<div className="mb-3">
-					<label htmlFor="thumbnail" className="form-label">
-						Thumbnail
-					</label>
-					{thumbnailOption === "link" && (
-						<input type="text" className="form-control" id="thumbnail" {...register("thumbnail")} />
-					)}
-					{thumbnailOption === "upload" && (
-						<input type="file" className="form-control" id="thumbnail" {...register("thumbnail", { required: true })} />
-					)}
-					{errors.thumbnail?.message && <p className="text-danger">{errors.thumbnail?.message}</p>}
-					{thumbnailUrl && (
-						<img src={thumbnailUrl} alt="Product Thumbnail" style={{ maxWidth: "200px", marginTop: "10px" }} />
-					)}
-				</div>
+				{thumbnailUrl && (
+					<img src={thumbnailUrl} alt="Product Thumbnail" style={{ maxWidth: "200px", marginTop: "10px" }} />
+				)}
 
 				<div className="mb-3">
 					<button className="btn btn-primary w-100" type="submit">

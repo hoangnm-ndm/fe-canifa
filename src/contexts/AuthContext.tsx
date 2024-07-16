@@ -1,90 +1,58 @@
-import instance from "@/api";
-import React, { createContext, useState, useEffect } from "react";
+// src/context/AuthContext.tsx
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-export type AuthContextType = {
-	isAuthenticated: boolean;
+export interface AuthContextType {
 	user: any;
-	register: (email: string, password: string, username: string) => void;
-	login: (email: string, password: string) => void;
+	login: (token: string, user: any) => void;
 	logout: () => void;
-};
+	isAdmin: boolean;
+}
 
-export const AuthContext = createContext({} as AuthContextType);
-
-type Props = {
+interface Props {
 	children: React.ReactNode;
-};
+}
 
-const AuthContextProvider = ({ children }: Props) => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [user, setUser] = useState(null);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: Props) => {
+	const [user, setUser] = useState<any>(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
-		const checkAuth = async () => {
-			const token = localStorage.getItem("token");
-			if (token) {
-				try {
-					// Dùng cách này khi đã có api/endpoint để kiểm tra token
-					const { data } = await instance.get("/me", {
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					});
-
-					// Dùng cách này khi chưa có api/endpoint để kiểm tra token
-					// const { data } = await instance.get("/660/users/4", {
-					// 	headers: {
-					// 		Authorization: `Bear ${token}`,
-					// 	},
-					// });
-
-					setUser(data);
-					setIsAuthenticated(true);
-				} catch (error) {
-					console.error(error);
-					setIsAuthenticated(false);
-					setUser(null);
-				}
-			}
-		};
-		checkAuth();
+		const token = localStorage.getItem("token");
+		if (token) {
+			// Lấy thông tin người dùng từ token
+			const user = JSON.parse(atob(token.split(".")[1]));
+			setUser(user);
+		}
 	}, []);
 
-	const login = async (email: string, password: string) => {
-		try {
-			const { data } = await instance.post("/auth/login", { email, password });
-			localStorage.setItem("token", data.accessToken);
-			setUser(data.user);
-			setIsAuthenticated(true);
-		} catch (error) {
-			console.error(error);
-			setIsAuthenticated(false);
-			setUser(null);
-		}
-	};
-
-	const register = async (email: string, password: string, username: string) => {
-		try {
-			const { data } = await instance.post("/auth/register", { email, password, username });
-			localStorage.setItem("token", data.accessToken);
-			setUser(data.user);
-			setIsAuthenticated(true);
-		} catch (error) {
-			console.error(error);
-			setIsAuthenticated(false);
-			setUser(null);
-		}
+	const login = (token: string, user: any) => {
+		localStorage.setItem("accessToken", token);
+		localStorage.setItem("user", JSON.stringify(user));
+		setUser(user);
+		navigate(user.role === "admin" ? "/admin" : "/");
 	};
 
 	const logout = () => {
-		localStorage.removeItem("token");
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("user");
 		setUser(null);
-		setIsAuthenticated(false);
+		navigate("/login");
 	};
 
 	return (
-		<AuthContext.Provider value={{ isAuthenticated, user, register, login, logout }}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={{ user, login, logout, isAdmin: user?.role === "admin" }}>
+			{children}
+		</AuthContext.Provider>
 	);
 };
 
-export default AuthContextProvider;
+export const useAuth = () => {
+	const context = useContext(AuthContext);
+	if (context === undefined) {
+		throw new Error("useAuth must be used within an AuthProvider");
+	}
+	return context;
+};
