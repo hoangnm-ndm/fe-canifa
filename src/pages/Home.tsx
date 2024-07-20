@@ -7,11 +7,11 @@ function Home() {
 		<>
 			<h1>Danh sach san pham</h1>
 			{state.products.map((product) => (
-				<div key={product.id} className="card">
-					<Link to={`/product-detail/${product.id}`}>
+				<div key={product._id} className="card">
+					<Link to={`/product-detail/${product._id}`}>
 						<img src={product.thumbnail} alt="" />
 					</Link>
-					<Link to={`/product-detail/${product.id}`}>
+					<Link to={`/product-detail/${product._id}`}>
 						<h2>{product.title}</h2>
 					</Link>
 					<p>${product.price}</p>

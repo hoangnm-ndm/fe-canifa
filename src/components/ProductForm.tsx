@@ -1,19 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProductContext } from "@/contexts/ProductContext";
 import productSchema from "@/utils/productSchema";
 import instance from "@/api";
 import { Product } from "@/interfaces/Product";
 import ImageUploader from "./ImageUploader";
+import { Category } from "@/interfaces/Category";
 
 const { VITE_CLOUD_NAME, VITE_UPLOAD_PRESET } = import.meta.env;
 
 const ProductForm = () => {
 	const { id } = useParams();
-	const { dispatch } = useContext(ProductContext);
-	const nav = useNavigate();
+	const [categories, setCategories] = useState([] as Category[]);
+	const { handleProduct } = useContext(ProductContext);
 	const [thumbnailUrl, setThumbnailUrl] = useState(null);
 
 	// State để lưu trữ lựa chọn của người dùng
@@ -71,21 +72,19 @@ const ProductForm = () => {
 				// Tôi sử dụng switch case để dễ mở rộng cho các tình huống trong tương lai
 			}
 
-			if (id) {
-				const { data } = await instance.patch(`/products/${id}`, updatedProduct);
-				dispatch({ type: "UPDATE_PRODUCT", payload: { id, product: updatedProduct } });
-				console.log(data);
-			} else {
-				const { data } = await instance.post("/products", updatedProduct);
-				dispatch({ type: "ADD_PRODUCT", payload: data });
-				console.log(data);
-			}
-
-			nav("/admin");
+			handleProduct(updatedProduct);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
+	useEffect(() => {
+		(async () => {
+			const { data } = await instance.get("/categories");
+			console.log(data);
+			setCategories(data.data);
+		})();
+	}, []);
 
 	return (
 		<div>
@@ -116,6 +115,19 @@ const ProductForm = () => {
 					</label>
 					<input type="text" className="form-control" id="description" {...register("description")} />
 					{errors.description?.message && <p className="text-danger">{errors.description?.message}</p>}
+				</div>
+
+				<div className="mb-3">
+					<label htmlFor="category" className="form-label">
+						category
+					</label>
+					<select name="category" id="category">
+						{categories.map((category) => (
+							<option key={category._id} value={category._id}>
+								{category.name}
+							</option>
+						))}
+					</select>
 				</div>
 
 				<ImageUploader

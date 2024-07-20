@@ -1,6 +1,13 @@
+import { AuthContext, AuthContextType } from "@/contexts/AuthContext";
+import { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 const LayoutAdmin = () => {
+	const { user } = useContext(AuthContext) as AuthContextType;
+	console.log(user);
+	if (user?.role !== "admin") {
+		return <h1>Access denied. You are not an admin.</h1>;
+	}
 	return (
 		<>
 			<header>

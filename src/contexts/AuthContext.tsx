@@ -1,58 +1,45 @@
-// src/context/AuthContext.tsx
-import React, { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { User } from "../interfaces/User";
 import { useNavigate } from "react-router-dom";
 
 export interface AuthContextType {
-	user: any;
-	login: (token: string, user: any) => void;
+	user: User | null;
+	login: (token: string, user: User) => void;
 	logout: () => void;
-	isAdmin: boolean;
 }
-
-interface Props {
-	children: React.ReactNode;
-}
-
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: Props) => {
-	const [user, setUser] = useState<any>(null);
-	const navigate = useNavigate();
+export const useAuth = () => {
+	const context = useContext(AuthContext);
+	if (context === undefined) {
+		throw new Error("useAuth must be used within a AuthProvider");
+	}
+	return context;
+};
 
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const [user, setUser] = useState<User | null>(null);
+	const nav = useNavigate();
 	useEffect(() => {
-		const token = localStorage.getItem("token");
+		const token = localStorage.getItem("accessToken");
 		if (token) {
-			// Lấy thông tin người dùng từ token
-			const user = JSON.parse(atob(token.split(".")[1]));
+			const user = JSON.parse(localStorage.getItem("user") || "");
 			setUser(user);
 		}
 	}, []);
 
-	const login = (token: string, user: any) => {
+	const login = (token: string, user: User) => {
 		localStorage.setItem("accessToken", token);
 		localStorage.setItem("user", JSON.stringify(user));
 		setUser(user);
-		navigate(user.role === "admin" ? "/admin" : "/");
+		nav(user.role === "admin" ? "/admin" : "/");
 	};
 
 	const logout = () => {
 		localStorage.removeItem("accessToken");
 		localStorage.removeItem("user");
 		setUser(null);
-		navigate("/login");
+		nav("/login");
 	};
-
-	return (
-		<AuthContext.Provider value={{ user, login, logout, isAdmin: user?.role === "admin" }}>
-			{children}
-		</AuthContext.Provider>
-	);
-};
-
-export const useAuth = () => {
-	const context = useContext(AuthContext);
-	if (context === undefined) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
-	return context;
+	return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 };

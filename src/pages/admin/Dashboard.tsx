@@ -1,22 +1,12 @@
-import instance from "@/api";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { ProductContext } from "../../contexts/ProductContext";
 import { Product } from "@/interfaces/Product";
 
 const Dashboard = () => {
-	const { state, dispatch } = useContext(ProductContext);
+	const { state, handleRemove } = useContext(ProductContext);
+	console.log(state.products);
 
-	const handleDelete = async (id: number | string) => {
-		if (confirm("Are you sure you want to delete this product?")) {
-			try {
-				await instance.delete(`/products/${id}`);
-				dispatch({ type: "DELETE_PRODUCT", payload: id });
-			} catch (error) {
-				console.error("Failed to delete product:", error);
-			}
-		}
-	};
 	return (
 		<div>
 			<h1>Hello, admin</h1>
@@ -30,23 +20,25 @@ const Dashboard = () => {
 						<th>Title</th>
 						<th>Price</th>
 						<th>Description</th>
+						<th>Category</th>
 						<th>Thumbnail</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					{state.products.map((p: Product) => (
-						<tr key={p.id}>
-							<td>{p.id}</td>
+						<tr key={p._id}>
+							<td>{p._id}</td>
 							<td>{p.title}</td>
 							<td>{p.price}</td>
 							<td>{p.description || "Dang cap nhat"}</td>
+							<td>{p.category?.name || "Dang cap nhat"}</td>
 							<td>{p.thumbnail ? <img src={p.thumbnail} alt="Dang cap nhat" /> : "Dang cap nhat"}</td>
 							<td>
-								<button className="btn btn-danger" onClick={() => handleDelete(p.id!)}>
+								<button className="btn btn-danger" onClick={() => handleRemove(p._id!)}>
 									Delete
 								</button>
-								<Link to={`/admin/product-edit/${p.id}`} className="btn btn-warning">
+								<Link to={`/admin/product-edit/${p._id}`} className="btn btn-warning">
 									Edit
 								</Link>
 							</td>
