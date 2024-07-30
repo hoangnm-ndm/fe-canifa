@@ -4,7 +4,7 @@ export interface Product {
 	_id?: string;
 	title: string;
 	price: number;
-	category?: Category;
+	category?: Category | string;
 	description?: string;
 	thumbnail?: string;
 	images?: string[];

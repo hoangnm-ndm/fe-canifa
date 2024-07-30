@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_API,
+	baseURL: import.meta.env.VITE_API || "http://localhost:8888/api",
 	timeout: 5000,
 	headers: {
 		"Content-Type": "application/json",
@@ -12,14 +12,12 @@ const instance = axios.create({
 instance.interceptors.request.use(
 	(config) => {
 		const token = localStorage.getItem("accessToken");
-		console.log(token);
-		console.log(`Bearer ${token}`);
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
 		return config;
 	},
-	(error) => {
+	(error: any) => {
 		return Promise.reject(error);
 	}
 );

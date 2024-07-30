@@ -16,7 +16,9 @@ function Home() {
 					</Link>
 					<p>${product.price}</p>
 					<p>{product.description}</p>
-					<button className="btn btn-danger">Add to cart</button>
+					<Link to={`/product-detail/${product._id}`} className="btn btn-danger">
+						Xem chi tiet
+					</Link>
 				</div>
 			))}
 		</>

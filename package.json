@@ -15,6 +15,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
+    "cloudinary-react": "^1.8.1",
     "clsx": "^2.1.1",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
@@ -22,6 +23,7 @@
     "lucide-react": "^0.400.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.52.1",
     "react-router-dom": "^6.24.0",
     "tailwind-merge": "^2.3.0",
@@ -29,9 +31,11 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/node": "^20.14.9",
-    "@types/react": "^18.2.66",
+    "@types/react": "^18.3.3",
     "@types/react-dom": "^18.2.22",
+    "@types/react-dropzone": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",

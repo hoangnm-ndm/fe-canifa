@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useReducer } from "react";
 import instance from "@/api";
 import productReducer from "@/reducers/productReducer";
 import { Product } from "@/interfaces/Product";
+import { useNavigate } from "react-router-dom";
 
 export type ProductContextType = {
 	state: { products: Product[] };
@@ -18,6 +19,7 @@ type Props = {
 
 const ProductContextProvider = ({ children }: Props) => {
 	const [state, dispatch] = useReducer(productReducer, { products: [] });
+	const nav = useNavigate();
 
 	useEffect(() => {
 		(async () => {
@@ -36,6 +38,7 @@ const ProductContextProvider = ({ children }: Props) => {
 				const { data } = await instance.post("/products", product);
 				dispatch({ type: "ADD_PRODUCT", payload: data.data });
 			}
+			nav("/admin");
 		} catch (error) {
 			console.log(error);
 		}

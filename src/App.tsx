@@ -4,10 +4,13 @@ import AuthForm from "./components/AuthForm";
 import LayoutClient from "./components/LayoutClient";
 import ProductDetail from "./pages/ProductDetail";
 import LayoutAdmin from "./components/LayoutAdmin";
-import Dashboard from "./pages/admin/Dashboard";
 import ProductForm from "./components/ProductForm";
 import Notfound from "./pages/Notfound";
 import Home from "./pages/Home";
+import ProductTable from "./pages/admin/ProductTable";
+import CategoryTable from "./pages/admin/CategoryTable";
+import CategoryForm from "./components/CategoryForm";
+import CartPage from "./pages/CartPage";
 
 function App() {
 	return (
@@ -20,12 +23,18 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/home" element={<Navigate to="/" />} />
 					<Route path="/product-detail/:id" element={<ProductDetail />} />
+					<Route path="/cart" element={<CartPage />} />
 				</Route>
 
 				<Route path="/admin" element={<LayoutAdmin />}>
-					<Route index element={<Dashboard />} />
+					<Route index element={<h1>Hello Admin</h1>} />
+					<Route path="/admin/products" element={<ProductTable />} />
 					<Route path="/admin/product-add" element={<ProductForm />} />
 					<Route path="/admin/product-edit/:id" element={<ProductForm />} />
+
+					<Route path="/admin/categories" element={<CategoryTable />} />
+					<Route path="/admin/category-add" element={<CategoryForm />} />
+					<Route path="/admin/category-edit/:id" element={<ProductForm />} />
 				</Route>
 
 				<Route path="*" element={<Notfound />} />

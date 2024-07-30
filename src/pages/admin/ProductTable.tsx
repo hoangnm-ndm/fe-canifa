@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ProductContext } from "../../contexts/ProductContext";
 import { Product } from "@/interfaces/Product";
 
-const Dashboard = () => {
+const ProductTable = () => {
 	const { state, handleRemove } = useContext(ProductContext);
 	console.log(state.products);
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
 							<td>{p.title}</td>
 							<td>{p.price}</td>
 							<td>{p.description || "Dang cap nhat"}</td>
-							<td>{p.category?.name || "Dang cap nhat"}</td>
+							<td>{p.category || "Dang cap nhat"}</td>
 							<td>{p.thumbnail ? <img src={p.thumbnail} alt="Dang cap nhat" /> : "Dang cap nhat"}</td>
 							<td>
 								<button className="btn btn-danger" onClick={() => handleRemove(p._id!)}>
@@ -50,4 +50,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default ProductTable;
